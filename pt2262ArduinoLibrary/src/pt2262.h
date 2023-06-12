@@ -1,16 +1,17 @@
 #ifndef PT2262_H
 #define PT2262_H
 
-#include <Arduino.h>
+//#include <Arduino.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+void sendBit(uint8_t PT2262_BIT);
 
-void function1();
-int function2(int parameter);
-// Khai báo các hàm và biến khác tại đây
+void sendFrame(uint8_t ADDRESS_RECEIVER_BITS, uint8_t dataCode);
+
+uint8_t getState();
 
 #ifdef __cplusplus
 }
