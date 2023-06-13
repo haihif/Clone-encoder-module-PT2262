@@ -1,9 +1,5 @@
 /*
  *  pt2262.c
- *
- * 
- * 
- * 
  * 
  *  author: Nguyen Huy Hai /haihif 
 */
@@ -40,11 +36,7 @@
 /*
  * D0->D1->D2->D3
  */
-#define DATA_STATE_A                  (0x08)
-#define DATA_STATE_B                  (0x04)
-#define DATA_STATE_C                  (0x02)
-#define DATA_STATE_D                  (0x01)
-#define DATA_STATE_OFF                (0x00)
+//static uint8_t DATA_STATE = 0x00;                    
 /*
  * Following datasheet, in this situation, my receiver has a resistor 680KOhm between OSC pins,
  * suggested oscillator resistor values of the sender is 3.3MOhm and the encode osc frequency is 10kHz
@@ -63,29 +55,61 @@
 #define PT2262_BIT_FLOAT              (2)
 #define PT2262_BIT_SYNC               (3)
 
-#ifdef USING_DIGITAL_WRITE_FAST
-#include "digitalWriteFast.h"
-#else
-#define digitalWriteFast(pin, level) digitalWrite(pin, level)
-#endif
+/*
+ * You're using digitalWrite() function in most of your Arduino projects. 
+ * But you may come to a point when this function is too slow, because you
+ * have to use it a lot, and with a high frequency. The below function can 
+ * speed up your programs by using direct port manipulation instead of 
+ * digitalWrite().
+ * 
+ * The details explication :https://roboticsbackend.com/arduino-fast-digitalwrite/ 
+ * 
+ * @param pin: Digital Pin
+ * @param level: HIGH or LOW
+ * 
+ * @note This fuction designed for Atmel328P
+ * @note PORT D: RX0, TX1, D2 -> D7
+ * @note PORT B: D8 -> D13
+ * @note PORT C: A0 -> A5
+ *
+ */ 
+#define BIT_READ(value, bit)            ((value) &   (1UL << (bit)))
+#define BIT_SET(value, bit)             ((value) |=  (1UL << (bit)))
+#define BIT_CLEAR(value, bit)           ((value) &= ~(1UL << (bit)))
+#define BIT_WRITE(value, bit, bitvalue) (bitvalue ? BIT_SET(value, bit) : BIT_CLEAR(value, bit))
 
+#define PIN_TO_PORT(P) (((P) >= 0 && (P) <= 7) ? &PORTD : (((P) >= 8 && (P) <= 13) ? &PORTB : &PORTC))
+
+#define PIN_TO_BIT(P) (((P) >= 0 && (P) <= 7) ? (P) : (((P) >= 8 && (P) <= 13) ? (P) - 8 : (P) - 14))
+
+#define digitalWriteFast(P,V) ( BIT_WRITE(*PIN_TO_PORT(P), PIN_TO_BIT(P), (V)) )
+
+#define digitalReadFast(P) ( (uint8_t) BIT_READ(*PIN_TO_PORT(P), PIN_TO_BIT(P)) )
+
+/*-------------------------------------------- MAIN ------------------------------------------------*/
 
 void setup() {
-  pinMode(LED_PIN, OUTPUT);
-  pinMode(DATA_OUT_PIN, OUTPUT);
+  pinMode(LED_PIN         , OUTPUT );
+  pinMode(DATA_OUT_PIN    , OUTPUT );
+  pinMode(DATA_INPUT_PIN_A, INPUT  );
+  pinMode(DATA_INPUT_PIN_B, INPUT  );
+  pinMode(DATA_INPUT_PIN_C, INPUT  );
+  pinMode(DATA_INPUT_PIN_D, INPUT  );
+
 }
 
 int loop() {
   
 }
 
+
 /*
  * A bit can be designated as Bit “0”, “1” or “f” if it is in low, high or floating 
  *state respectively. One bit waveform consists of 2 pulse cycles. Each pulse cycle
  *has 16 oscillating time periods. For further details, please refer to the diagram:    
- * @example
+ * @example 
  *        _   _   _   _   _                          _   _   _                        _   _
- * OSC   |a|_| |_| |_| |_| |_...                 ...| |_| |_| |_...              ..._| |_| |_
+ * OSC   | |_| |_| |_| |_| |_...                 ...| |_| |_| |_...              ..._| |_| |_
  *       <--------------------------------- 32 Clock Period -------------------------------->
  *        _____________                              ______________
  * Bit 0:|     4a      |____________________________|      4a      |_________________________
@@ -179,16 +203,11 @@ void sendFrame(uint8_t ADDRESS_RECEIVER_BITS, uint8_t dataCode){
     }
 }
 
-uint8_t getState(){
-    if (digitalRead(DATA_INPUT_PIN_A) == 1)
-        return DATA_STATE_A;
-    else if (digitalRead(DATA_INPUT_PIN_B) == 1)
-        return DATA_STATE_B;
-    else if (digitalRead(DATA_INPUT_PIN_C) == 1)
-        return DATA_STATE_C;
-    else if (digitalRead(DATA_INPUT_PIN_D) == 1)
-        return DATA_STATE_D;
-    else 
-        return DATA_STATE_OFF;
+void getState(uint8_t *DATA_STATE){
+    *DATA_STATE = ( digitalReadFast(DATA_INPUT_PIN_A) != 0 ) ? ( *DATA_STATE | 0x08 ) : ( *DATA_STATE & ~(0x08) );
+    *DATA_STATE = ( digitalReadFast(DATA_INPUT_PIN_B) != 0 ) ? ( *DATA_STATE | 0x04 ) : ( *DATA_STATE & ~(0x04) );
+    *DATA_STATE = ( digitalReadFast(DATA_INPUT_PIN_C) != 0 ) ? ( *DATA_STATE | 0x02 ) : ( *DATA_STATE & ~(0x02) );
+    *DATA_STATE = ( digitalReadFast(DATA_INPUT_PIN_D) != 0 ) ? ( *DATA_STATE | 0x01 ) : ( *DATA_STATE & ~(0x01) );
 }
+
 

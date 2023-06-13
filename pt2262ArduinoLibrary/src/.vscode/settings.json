@@ -53,8 +53,5 @@
   "C_Cpp_Runner.useAddressSanitizer": false,
   "C_Cpp_Runner.useUndefinedSanitizer": false,
   "C_Cpp_Runner.useLeakSanitizer": false,
-  "C_Cpp_Runner.showCompilationTime": false,
-  "files.associations": {
-    "digitalwritefast.h": "c"
-  }
+  "C_Cpp_Runner.showCompilationTime": false
 }
