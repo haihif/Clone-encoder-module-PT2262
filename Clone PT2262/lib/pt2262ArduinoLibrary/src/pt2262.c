@@ -11,27 +11,27 @@
 /*--------------------------------------------DEFINE------------------------------------------------*/
 #define VERSION "0.1"
 
-#define POWER_ON_PIN                  CONFIG_POWER_ON_PIN
-#define LED_PIN                       CONFIG_LED_PIN
+#define POWER_ON_PIN                  9
+#define LED_PIN                       8
 
 /*
  * The output signal pin connected 315MHz modulation input pin 
  */
-#define DATA_OUT_PIN                  CONFIG_DATA_OUT_PIN
+#define DATA_OUT_PIN                  10
 
 /*
  * Using for PT2262/2272 with 8 address bits and 4 data bits
  */
-#define DATA_INPUT_PIN_A              CONFIG_DATA_INPUT_PIN_A
-#define DATA_INPUT_PIN_B              CONFIG_DATA_INPUT_PIN_B
-#define DATA_INPUT_PIN_C              CONFIG_DATA_INPUT_PIN_C
-#define DATA_INPUT_PIN_D              CONFIG_DATA_INPUT_PIN_D
+#define DATA_INPUT_PIN_A              2
+#define DATA_INPUT_PIN_B              3
+#define DATA_INPUT_PIN_C              4
+#define DATA_INPUT_PIN_D              5
 
 /*
  * A7->A6->A5->A4->A3->A2->A1->A0
  * Example: Bin 0b10011001, Hex 0x99    
  */
-#define ADDRESS_RECEIVER_BITS         CONFIG_ADDRESS_RECEIVER_BITS
+#define ADDRESS_COMMUNICATION         0x00
 
 /*
  * D0->D1->D2->D3
@@ -88,19 +88,19 @@
 
 /*-------------------------------------------- MAIN ------------------------------------------------*/
 
-void setup() {
-  pinMode(LED_PIN         , OUTPUT );
-  pinMode(DATA_OUT_PIN    , OUTPUT );
-  pinMode(DATA_INPUT_PIN_A, INPUT  );
-  pinMode(DATA_INPUT_PIN_B, INPUT  );
-  pinMode(DATA_INPUT_PIN_C, INPUT  );
-  pinMode(DATA_INPUT_PIN_D, INPUT  );
+// void setup() {
+//   pinMode(LED_PIN         , OUTPUT );
+//   pinMode(DATA_OUT_PIN    , OUTPUT );
+//   pinMode(DATA_INPUT_PIN_A, INPUT  );
+//   pinMode(DATA_INPUT_PIN_B, INPUT  );
+//   pinMode(DATA_INPUT_PIN_C, INPUT  );
+//   pinMode(DATA_INPUT_PIN_D, INPUT  );
 
-}
+// }
 
-int loop() {
+// int loop() {
   
-}
+// }
 
 
 /*
