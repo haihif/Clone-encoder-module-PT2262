@@ -4,39 +4,37 @@
  *  author: Nguyen Huy Hai /haihif 
 */
 
-#include "pt2262.h"
 #include <stdint.h>
 #include <Arduino.h>
 
 /*--------------------------------------------DEFINE------------------------------------------------*/
 #define VERSION "0.1"
 
-#define POWER_ON_PIN                  9
-#define LED_PIN                       8
+// #define POWER_ON_PIN                  9
+// #define LED_PIN                       8
 
-/*
- * The output signal pin connected 315MHz modulation input pin 
- */
-#define DATA_OUT_PIN                  10
+// /*
+//  * The output signal pin connected 315MHz modulation input pin 
+//  */
+// #define DATA_OUT_PIN                  10
 
-/*
- * Using for PT2262/2272 with 8 address bits and 4 data bits
- */
-#define DATA_INPUT_PIN_A              2
-#define DATA_INPUT_PIN_B              3
-#define DATA_INPUT_PIN_C              4
-#define DATA_INPUT_PIN_D              5
+// /*
+//  * A7->A6->A5->A4->A3->A2->A1->A0
+//  * Example: Bin 0b10011001, Hex 0x99    
+//  */
+// #define ADDRESS_COMMUNICATION         0x00
 
-/*
- * A7->A6->A5->A4->A3->A2->A1->A0
- * Example: Bin 0b10011001, Hex 0x99    
- */
-#define ADDRESS_COMMUNICATION         0x00
 
-/*
- * D0->D1->D2->D3
- */
-//static uint8_t DATA_STATE = 0x00;                    
+typedef struct {
+    uint8_t POWER_ON_PIN;
+    uint8_t LED_PIN;
+    uint8_t DATA_OUT_PIN;
+    uint8_t DATA_INPUT_PIN[4];
+    uint8_t ADDRESS_COMMUNICATION;
+    uint8_t DATA_STATE ;
+} st_pt2262;
+
+                
 /*
  * Following datasheet, in this situation, my receiver has a resistor 680KOhm between OSC pins,
  * suggested oscillator resistor values of the sender is 3.3MOhm and the encode osc frequency is 10kHz
@@ -86,21 +84,23 @@
 
 #define digitalReadFast(P) ( (uint8_t) BIT_READ(*PIN_TO_PORT(P), PIN_TO_BIT(P)) )
 
-/*-------------------------------------------- MAIN ------------------------------------------------*/
+void pt2262Init(st_pt2262 *PT2262, uint8_t led_pin, uint8_t data_out_pin, uint8_t data_input_pin0, uint8_t data_input_pin1, uint8_t data_input_pin2, uint8_t data_input_pin3)
+{
+  PT2262->LED_PIN = led_pin;
+  PT2262->DATA_OUT_PIN = data_out_pin;
+  PT2262->DATA_INPUT_PIN[0] = data_input_pin0;
+  PT2262->DATA_INPUT_PIN[1] = data_input_pin1;
+  PT2262->DATA_INPUT_PIN[2] = data_input_pin2;
+  PT2262->DATA_INPUT_PIN[3] = data_input_pin3;
 
-// void setup() {
-//   pinMode(LED_PIN         , OUTPUT );
-//   pinMode(DATA_OUT_PIN    , OUTPUT );
-//   pinMode(DATA_INPUT_PIN_A, INPUT  );
-//   pinMode(DATA_INPUT_PIN_B, INPUT  );
-//   pinMode(DATA_INPUT_PIN_C, INPUT  );
-//   pinMode(DATA_INPUT_PIN_D, INPUT  );
+  pinMode(PT2262->LED_PIN         , OUTPUT );
+  pinMode(PT2262->DATA_OUT_PIN    , OUTPUT );
+  pinMode(PT2262->DATA_INPUT_PIN[0], INPUT  );
+  pinMode(PT2262->DATA_INPUT_PIN[1], INPUT  );
+  pinMode(PT2262->DATA_INPUT_PIN[2], INPUT  );
+  pinMode(PT2262->DATA_INPUT_PIN[3], INPUT  );
 
-// }
-
-// int loop() {
-  
-// }
+}
 
 
 /*
@@ -131,46 +131,46 @@
  * PT2262_BIT: "0", "1", "FLOAT" or "SYNC"
  * 
  */
-void sendBit(uint8_t PT2262_BIT){
+void sendBit(st_pt2262 *PT2262, uint8_t PT2262_BIT){
     switch (PT2262_BIT) {
         case PT2262_BIT_0: // Bit 0: 4 HIGH -> 12 LOW -> 4 HIGH -> 12 LOW
-            digitalWriteFast(DATA_OUT_PIN, 1);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
-            digitalWriteFast(DATA_OUT_PIN, 0);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_12);
-            digitalWriteFast(DATA_OUT_PIN, 1);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
-            digitalWriteFast(DATA_OUT_PIN, 0);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_12);
             break;
         case PT2262_BIT_1: // Bit 0: 12 HIGH -> 4 LOW -> 12 HIGH -> 4 LOW
-            digitalWriteFast(DATA_OUT_PIN, 1);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_12);
-            digitalWriteFast(DATA_OUT_PIN, 0);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
-            digitalWriteFast(DATA_OUT_PIN, 1);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_12);
-            digitalWriteFast(DATA_OUT_PIN, 0);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
             break;
         case PT2262_BIT_FLOAT: // Bit 0: 4 HIGH -> 12 LOW -> 12 HIGH -> 4 LOW
-            digitalWriteFast(DATA_OUT_PIN, 1);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
-            digitalWriteFast(DATA_OUT_PIN, 0);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_12);
-            digitalWriteFast(DATA_OUT_PIN, 1);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_12);
-            digitalWriteFast(DATA_OUT_PIN, 0);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
             break;
         case PT2262_BIT_SYNC: // Bit 0: 4 HIGH -> 128 LOW 
-            digitalWriteFast(DATA_OUT_PIN, 1);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
-            digitalWriteFast(DATA_OUT_PIN, 0);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_128);
             break;
         default:
-            digitalWriteFast(DATA_OUT_PIN, 0);
+            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
         break;
     }
 }
@@ -183,31 +183,40 @@ void sendBit(uint8_t PT2262_BIT){
  * @param  
  * dataCode:  4 data bits   
  */
-void sendFrame(uint8_t ADDRESS_RECEIVER_BITS, uint8_t dataCode){
+void sendFrame(st_pt2262 *PT2262, uint8_t dataCode){
     // 4 Code Word
     for(uint8_t i=0; i<4; i++){
         // 8 Address Bits
         for(uint8_t a=0; a<8; a++){
-            uint8_t bitValue = ADDRESS_RECEIVER_BITS & 0x01;
-            ADDRESS_RECEIVER_BITS = ADDRESS_RECEIVER_BITS >> 1;
-            sendBit(bitValue);
+            //uint8_t bitValue = PT2262->ADDRESS_COMMUNICATION & 0x01;
+            //PT2262->ADDRESS_COMMUNICATION = PT2262->ADDRESS_COMMUNICATION >> 1;
+            sendBit(PT2262, PT2262_BIT_FLOAT);
         }
         // 4 Data Bits
         for(uint8_t d=0; d<4; d++){
-            uint8_t bitValue = dataCode & 0x01;
-            dataCode = dataCode >> 1;
-            sendBit(bitValue);
+            // uint8_t bitValue = dataCode & 0x01;
+            // dataCode = dataCode >> 1;
+            sendBit(PT2262, PT2262_BIT_FLOAT);
         }
         // Sync bit
-        sendBit(PT2262_BIT_SYNC);
+        sendBit(PT2262, PT2262_BIT_SYNC);
     }
 }
 
-void getState(uint8_t *DATA_STATE){
-    *DATA_STATE = ( digitalReadFast(DATA_INPUT_PIN_A) != 0 ) ? ( *DATA_STATE | 0x08 ) : ( *DATA_STATE & ~(0x08) );
-    *DATA_STATE = ( digitalReadFast(DATA_INPUT_PIN_B) != 0 ) ? ( *DATA_STATE | 0x04 ) : ( *DATA_STATE & ~(0x04) );
-    *DATA_STATE = ( digitalReadFast(DATA_INPUT_PIN_C) != 0 ) ? ( *DATA_STATE | 0x02 ) : ( *DATA_STATE & ~(0x02) );
-    *DATA_STATE = ( digitalReadFast(DATA_INPUT_PIN_D) != 0 ) ? ( *DATA_STATE | 0x01 ) : ( *DATA_STATE & ~(0x01) );
+/*
+ * When the button pressed, the logic level is "1" 
+ *
+ * @param PT2262: 
+ * @param DATA_STATE D0->D3 level 
+ * 
+ */
+void getState(st_pt2262 *PT2262){
+    PT2262->DATA_STATE = 0x00;
+    
+    PT2262->DATA_STATE = ( digitalReadFast(PT2262->DATA_INPUT_PIN[0]) != 0 ) ? ( PT2262->DATA_STATE | 0x08 ) : ( PT2262->DATA_STATE & ~(0x08) );
+    PT2262->DATA_STATE = ( digitalReadFast(PT2262->DATA_INPUT_PIN[1]) != 0 ) ? ( PT2262->DATA_STATE | 0x04 ) : ( PT2262->DATA_STATE & ~(0x04) );
+    PT2262->DATA_STATE = ( digitalReadFast(PT2262->DATA_INPUT_PIN[2]) != 0 ) ? ( PT2262->DATA_STATE | 0x02 ) : ( PT2262->DATA_STATE & ~(0x02) );
+    PT2262->DATA_STATE = ( digitalReadFast(PT2262->DATA_INPUT_PIN[3]) != 0 ) ? ( PT2262->DATA_STATE | 0x01 ) : ( PT2262->DATA_STATE & ~(0x01) );
 }
 
 

@@ -9,10 +9,29 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "C/C++ Runner: Debug Session",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            "externalConsole": true,
+            "cwd": "g:/Workspace/大学のプロジェクト/Clone encoder module PT2262/Clone PT2262",
+            "program": "g:/Workspace/大学のプロジェクト/Clone encoder module PT2262/Clone PT2262/build/Debug/outDebug",
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/.pio/build/nanoatmega328/firmware.elf",
+            "executable": "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/.pio/build/nanoatmega328/firmware.elf",
             "projectEnvName": "nanoatmega328",
             "toolchainBinDir": "C:/Users/DELL 5425/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart",
@@ -25,7 +44,7 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/.pio/build/nanoatmega328/firmware.elf",
+            "executable": "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/.pio/build/nanoatmega328/firmware.elf",
             "projectEnvName": "nanoatmega328",
             "toolchainBinDir": "C:/Users/DELL 5425/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart"
@@ -34,7 +53,7 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (without uploading)",
-            "executable": "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/.pio/build/nanoatmega328/firmware.elf",
+            "executable": "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/.pio/build/nanoatmega328/firmware.elf",
             "projectEnvName": "nanoatmega328",
             "toolchainBinDir": "C:/Users/DELL 5425/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart",

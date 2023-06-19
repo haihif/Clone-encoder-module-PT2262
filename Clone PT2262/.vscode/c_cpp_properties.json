@@ -8,9 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/include",
-                "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/src",
-                "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/lib/pt2262ArduinoLibrary/src",
+                "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/include",
+                "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/src",
+                "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/lib/pt2262ArduinoLibrary",
                 "C:/Users/DELL 5425/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "C:/Users/DELL 5425/.platformio/packages/framework-arduino-avr/variants/eightanaloginputs",
                 "C:/Users/DELL 5425/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
@@ -23,9 +23,9 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/include",
-                    "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/src",
-                    "C:/Users/DELL 5425/Documents/PlatformIO/Projects/Clone PT2262/lib/pt2262ArduinoLibrary/src",
+                    "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/include",
+                    "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/src",
+                    "G:/Workspace/Projects/Clone encoder module PT2262/Clone PT2262/lib/pt2262ArduinoLibrary",
                     "C:/Users/DELL 5425/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "C:/Users/DELL 5425/.platformio/packages/framework-arduino-avr/variants/eightanaloginputs",
                     "C:/Users/DELL 5425/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
