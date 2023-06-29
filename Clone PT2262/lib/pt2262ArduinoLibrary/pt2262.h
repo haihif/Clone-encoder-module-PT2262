@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <Arduino.h>
+#include <stdio.h>
 
 /*--------------------------------------------DEFINE------------------------------------------------*/
 #define VERSION "0.1"
@@ -40,7 +41,7 @@ typedef struct {
  * suggested oscillator resistor values of the sender is 3.3MOhm and the encode osc frequency is 10kHz
  * So that, the clock period should be 100 us
  */
-#define PT2262_OSC_CLOCK_PERIOD       (100) 
+#define PT2262_OSC_CLOCK_PERIOD       (85) 
 #define PT2262_CLK_PERIOD_4           (PT2262_OSC_CLOCK_PERIOD*4)
 #define PT2262_CLK_PERIOD_12          (PT2262_OSC_CLOCK_PERIOD*12)
 #define PT2262_CLK_PERIOD_128         (PT2262_OSC_CLOCK_PERIOD*128)
@@ -109,7 +110,7 @@ void pt2262Init(st_pt2262 *PT2262, uint8_t led_pin, uint8_t data_out_pin, uint8_
  *has 16 oscillating time periods. For further details, please refer to the diagram:    
  * @example 
  *        _   _   _   _   _                          _   _   _                        _   _
- * OSC   | |_| |_| |_| |_| |_...                 ...| |_| |_| |_...              ..._| |_| |_
+ * OSC   | |_| |_| |_| |_| |_.......................| |_| |_| |_...................._| |_| |_
  *       <--------------------------------- 32 Clock Period -------------------------------->
  *        _____________                              ______________
  * Bit 0:|     4a      |____________________________|      4a      |_________________________
@@ -143,7 +144,7 @@ void sendBit(st_pt2262 *PT2262, uint8_t PT2262_BIT){
             digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_12);
             break;
-        case PT2262_BIT_1: // Bit 0: 12 HIGH -> 4 LOW -> 12 HIGH -> 4 LOW
+        case PT2262_BIT_1: // Bit 1: 12 HIGH -> 4 LOW -> 12 HIGH -> 4 LOW
             digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_12);
             digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
@@ -153,7 +154,7 @@ void sendBit(st_pt2262 *PT2262, uint8_t PT2262_BIT){
             digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
             break;
-        case PT2262_BIT_FLOAT: // Bit 0: 4 HIGH -> 12 LOW -> 12 HIGH -> 4 LOW
+        case PT2262_BIT_FLOAT: // Bit F: 4 HIGH -> 12 LOW -> 12 HIGH -> 4 LOW
             digitalWriteFast(PT2262->DATA_OUT_PIN, 1);
             delayMicroseconds(PT2262_CLK_PERIOD_4);
             digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
@@ -170,7 +171,7 @@ void sendBit(st_pt2262 *PT2262, uint8_t PT2262_BIT){
             delayMicroseconds(PT2262_CLK_PERIOD_128);
             break;
         default:
-            digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
+            //digitalWriteFast(PT2262->DATA_OUT_PIN, 0);
         break;
     }
 }
@@ -194,9 +195,8 @@ void sendFrame(st_pt2262 *PT2262, uint8_t dataCode){
         }
         // 4 Data Bits
         for(uint8_t d=0; d<4; d++){
-            // uint8_t bitValue = dataCode & 0x01;
-            // dataCode = dataCode >> 1;
-            sendBit(PT2262, PT2262_BIT_FLOAT);
+            uint8_t bitValue = (dataCode >> d) & 0x01;
+            sendBit(PT2262, bitValue);
         }
         // Sync bit
         sendBit(PT2262, PT2262_BIT_SYNC);
