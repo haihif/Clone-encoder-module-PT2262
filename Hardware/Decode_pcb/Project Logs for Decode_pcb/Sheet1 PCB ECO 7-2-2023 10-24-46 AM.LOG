@@ -1,0 +1,10 @@
+Added Component: Designator=U1(PCBComponent_1)
+Added Pin To Net: NetName=ButtonD0 Pin=U1-5
+Added Pin To Net: NetName=ButtonD1 Pin=U1-6
+Added Pin To Net: NetName=ButtonD2 Pin=U1-7
+Added Pin To Net: NetName=ButtonD3 Pin=U1-8
+Added Pin To Net: NetName=Dout Pin=U1-10
+Added Pin To Net: NetName=Led Pin=U1-15
+Added Pin To Net: NetName=VCC Pin=U1-27
+Added Pin To Net: NetName=GND Pin=U1-29
+Added Member To Class: ClassName=Sheet1 Member=Component U1 Arduino Nano

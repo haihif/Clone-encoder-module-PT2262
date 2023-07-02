@@ -101,6 +101,7 @@ void pt2262Init(st_pt2262 *PT2262, uint8_t led_pin, uint8_t data_out_pin, uint8_
   pinMode(PT2262->DATA_INPUT_PIN[2], INPUT  );
   pinMode(PT2262->DATA_INPUT_PIN[3], INPUT  );
 
+  digitalWrite(PT2262->LED_PIN, 1);
 }
 
 
@@ -187,17 +188,18 @@ void sendBit(st_pt2262 *PT2262, uint8_t PT2262_BIT){
 void sendFrame(st_pt2262 *PT2262, uint8_t dataCode){
     // 4 Code Word
     for(uint8_t i=0; i<4; i++){
+
         // 8 Address Bits
         for(uint8_t a=0; a<8; a++){
-            //uint8_t bitValue = PT2262->ADDRESS_COMMUNICATION & 0x01;
-            //PT2262->ADDRESS_COMMUNICATION = PT2262->ADDRESS_COMMUNICATION >> 1;
             sendBit(PT2262, PT2262_BIT_FLOAT);
         }
+
         // 4 Data Bits
         for(uint8_t d=0; d<4; d++){
             uint8_t bitValue = (dataCode >> d) & 0x01;
             sendBit(PT2262, bitValue);
         }
+
         // Sync bit
         sendBit(PT2262, PT2262_BIT_SYNC);
     }
@@ -213,10 +215,14 @@ void sendFrame(st_pt2262 *PT2262, uint8_t dataCode){
 void getState(st_pt2262 *PT2262){
     PT2262->DATA_STATE = 0x00;
     
-    PT2262->DATA_STATE = ( digitalReadFast(PT2262->DATA_INPUT_PIN[0]) != 0 ) ? ( PT2262->DATA_STATE | 0x08 ) : ( PT2262->DATA_STATE & ~(0x08) );
-    PT2262->DATA_STATE = ( digitalReadFast(PT2262->DATA_INPUT_PIN[1]) != 0 ) ? ( PT2262->DATA_STATE | 0x04 ) : ( PT2262->DATA_STATE & ~(0x04) );
-    PT2262->DATA_STATE = ( digitalReadFast(PT2262->DATA_INPUT_PIN[2]) != 0 ) ? ( PT2262->DATA_STATE | 0x02 ) : ( PT2262->DATA_STATE & ~(0x02) );
-    PT2262->DATA_STATE = ( digitalReadFast(PT2262->DATA_INPUT_PIN[3]) != 0 ) ? ( PT2262->DATA_STATE | 0x01 ) : ( PT2262->DATA_STATE & ~(0x01) );
+     if( digitalRead(PT2262->DATA_INPUT_PIN[0]) == 0 )
+       PT2262->DATA_STATE += 0x08  ;
+     if( digitalRead(PT2262->DATA_INPUT_PIN[1]) == 0 )
+       PT2262->DATA_STATE += 0x04  ;
+     if( digitalRead(PT2262->DATA_INPUT_PIN[2]) == 0 )
+       PT2262->DATA_STATE += 0x02  ;
+     if( digitalRead(PT2262->DATA_INPUT_PIN[3]) == 0 )
+       PT2262->DATA_STATE += 0x01  ;
 }
 
 
